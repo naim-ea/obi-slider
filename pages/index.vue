@@ -67,16 +67,24 @@ export default {
     // Init interval for automatic sliding
     this.interval = setInterval(this.handleInfinite, 16)
 
+    let numberOfImagesLoaded = 0
+
     // Load all images and add data about them
     for (let i = 0; i < this.numberOfImages; i++) {
       const img = document.createElement('img')
+
       img.onload = () => {
+        // Calculate height of smaller images
+        const height = numberOfImagesLoaded % 2 === 0 ? this.parentHeight : this.parentHeight * 0.86
+        const width = height * img.width / img.height
+
         this.images.push({
           // height gets the height of the 'gallery' div because it expands to full height
-          height: this.parentHeight,
+          height: height,
 
           // width is a ratio between the parentHeight and the ratio of the original image (to fully keep the image)
-          width: this.parentHeight * img.width / img.height,
+          width: width,
+
           src: img.src,
 
           // y = -50% because we need them to be centered vertically
@@ -84,7 +92,9 @@ export default {
         })
 
         // we calculate the totalwidth of the slider within this loop
-        this.totalWidth += this.marginValue + (this.parentHeight * img.width / img.height)
+        this.totalWidth += width + this.marginValue
+
+        numberOfImagesLoaded++
       }
 
       // we keep the srcs here to display it in the template
